@@ -19,16 +19,16 @@ class FormStructure
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["form.details", "form.list"])]
+    #[Groups(["form.details", "form.list", "structure.details", "structure.list"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100, unique: true)]
-    #[Groups(["form.details", "form.list"])]
+    #[Groups(["form.details", "form.list", "structure.details", "structure.list"])]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'formStructures')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["form.details"])]
+    #[Groups(["form.details", "structure.details", "structure.list"])]
     private ?TypeStructure $typeStructure = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -58,9 +58,13 @@ class FormStructure
     #[ORM\OneToMany(mappedBy: 'formstructure', targetEntity: FonctionFormStructure::class, orphanRemoval: true)]
     private Collection $fonctionFormStructures;
 
+    #[ORM\OneToMany(mappedBy: 'forme', targetEntity: Structure::class)]
+    private Collection $structures;
+
     public function __construct()
     {
         $this->fonctionFormStructures = new ArrayCollection();
+        $this->structures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -169,6 +173,36 @@ class FormStructure
             // set the owning side to null (unless already changed)
             if ($fonctionFormStructure->getFormstructure() === $this) {
                 $fonctionFormStructure->setFormstructure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Structure>
+     */
+    public function getStructures(): Collection
+    {
+        return $this->structures;
+    }
+
+    public function addStructure(Structure $structure): self
+    {
+        if (!$this->structures->contains($structure)) {
+            $this->structures->add($structure);
+            $structure->setForme($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStructure(Structure $structure): self
+    {
+        if ($this->structures->removeElement($structure)) {
+            // set the owning side to null (unless already changed)
+            if ($structure->getForme() === $this) {
+                $structure->setForme(null);
             }
         }
 

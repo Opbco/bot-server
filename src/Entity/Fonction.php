@@ -57,9 +57,13 @@ class Fonction
     #[ORM\OneToMany(mappedBy: 'fonction', targetEntity: FonctionFormStructure::class, orphanRemoval: true)]
     private Collection $fonctionFormStructures;
 
+    #[ORM\OneToMany(mappedBy: 'fonction', targetEntity: Service::class)]
+    private Collection $services;
+
     public function __construct()
     {
         $this->fonctionFormStructures = new ArrayCollection();
+        $this->services = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,6 +172,36 @@ class Fonction
             // set the owning side to null (unless already changed)
             if ($fonctionFormStructure->getFonction() === $this) {
                 $fonctionFormStructure->setFonction(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Service>
+     */
+    public function getServices(): Collection
+    {
+        return $this->services;
+    }
+
+    public function addService(Service $service): self
+    {
+        if (!$this->services->contains($service)) {
+            $this->services->add($service);
+            $service->setFonction($this);
+        }
+
+        return $this;
+    }
+
+    public function removeService(Service $service): self
+    {
+        if ($this->services->removeElement($service)) {
+            // set the owning side to null (unless already changed)
+            if ($service->getFonction() === $this) {
+                $service->setFonction(null);
             }
         }
 

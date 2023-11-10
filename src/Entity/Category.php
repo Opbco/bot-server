@@ -19,11 +19,11 @@ class Category
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["category.details", "category.list", "type.details", "form.details"])]
+    #[Groups(["category.details", "category.list", "type.details", "form.details", "structure.details", "structure.list"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100, unique: true)]
-    #[Groups(["category.details", "category.list", "type.details", "form.details"])]
+    #[Groups(["category.details", "category.list", "type.details", "form.details", "structure.details", "structure.list"])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

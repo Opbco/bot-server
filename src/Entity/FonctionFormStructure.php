@@ -54,6 +54,11 @@ class FonctionFormStructure
     #[ORM\ManyToOne]
     private ?User $user_updated = null;
 
+    public function __toString()
+    {
+        return $this->nbPosition . ' ' . $this->fonction . ' - ' . $this->formstructure;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

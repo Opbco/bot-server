@@ -17,16 +17,16 @@ class TypeStructure
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["type.details", "type.list", "form.details"])]
+    #[Groups(["type.details", "type.list", "form.details", "structure.details", "structure.list"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100, unique: true)]
-    #[Groups(["type.details", "type.list", "form.details"])]
+    #[Groups(["type.details", "type.list", "form.details", "structure.details", "structure.list"])]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'typeStructures')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["type.details", "form.details"])]
+    #[Groups(["type.details", "form.details", "structure.details", "structure.list"])]
     private ?Category $category = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

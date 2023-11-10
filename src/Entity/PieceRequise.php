@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\SubDivisionRepository;
+use App\Repository\PieceRequiseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,27 +12,28 @@ use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
-#[ORM\Entity(repositoryClass: SubDivisionRepository::class)]
+#[ORM\Entity(repositoryClass: PieceRequiseRepository::class)]
 #[ApiResource]
-class SubDivision
+class PieceRequise
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["subdivision.details", "subdivision.list", "structure.details", "structure.list"])]
+    #[Groups(["piece.details", "piece.list"])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100, unique: true)]
-    #[Groups(["subdivision.details", "subdivision.list", "structure.details", "structure.list"])]
+    #[ORM\Column(length: 255)]
+    #[Groups(["piece.details", "piece.list"])]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'subDivisions')]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["subdivision.details", "structure.details", "structure.list"])]
-    private ?Division $division = null;
+    #[ORM\Column(length: 255)]
+    #[Groups(["piece.details", "piece.list"])]
+    private ?string $signataire = null;
+
+    #[ORM\OneToMany(mappedBy: 'pieceRequise', targetEntity: TypeDocumentPieces::class)]
+    private Collection $typeDocumentPieces;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(["subdivision.details", "subdivision.list"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -40,7 +41,6 @@ class SubDivision
     private ?\DateTimeInterface $date_created = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(["subdivision.details"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -49,18 +49,14 @@ class SubDivision
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["subdivision.details", "subdivision.list"])]
     private ?User $user_created = null;
 
     #[ORM\ManyToOne]
     private ?User $user_updated = null;
 
-    #[ORM\OneToMany(mappedBy: 'subdivision', targetEntity: Structure::class)]
-    private Collection $structures;
-
     public function __construct()
     {
-        $this->structures = new ArrayCollection();
+        $this->typeDocumentPieces = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -80,21 +76,46 @@ class SubDivision
         return $this;
     }
 
-    public function getDivision(): ?Division
+    public function getSignataire(): ?string
     {
-        return $this->division;
+        return $this->signataire;
     }
 
-    public function setDivision(?Division $division): self
+    public function setSignataire(string $signataire): self
     {
-        $this->division = $division;
+        $this->signataire = $signataire;
 
         return $this;
     }
 
-    public function __toString()
+    /**
+     * @return Collection<int, TypeDocumentPieces>
+     */
+    public function getTypeDocumentPieces(): Collection
     {
-        return $this->name;
+        return $this->typeDocumentPieces;
+    }
+
+    public function addTypeDocumentPiece(TypeDocumentPieces $typeDocumentPiece): self
+    {
+        if (!$this->typeDocumentPieces->contains($typeDocumentPiece)) {
+            $this->typeDocumentPieces->add($typeDocumentPiece);
+            $typeDocumentPiece->setPieceRequise($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTypeDocumentPiece(TypeDocumentPieces $typeDocumentPiece): self
+    {
+        if ($this->typeDocumentPieces->removeElement($typeDocumentPiece)) {
+            // set the owning side to null (unless already changed)
+            if ($typeDocumentPiece->getPieceRequise() === $this) {
+                $typeDocumentPiece->setPieceRequise(null);
+            }
+        }
+
+        return $this;
     }
 
     public function getDateCreated(): ?\DateTimeInterface
@@ -141,36 +162,6 @@ class SubDivision
     public function setUserUpdated(?User $user_updated): self
     {
         $this->user_updated = $user_updated;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Structure>
-     */
-    public function getStructures(): Collection
-    {
-        return $this->structures;
-    }
-
-    public function addStructure(Structure $structure): self
-    {
-        if (!$this->structures->contains($structure)) {
-            $this->structures->add($structure);
-            $structure->setSubdivision($this);
-        }
-
-        return $this;
-    }
-
-    public function removeStructure(Structure $structure): self
-    {
-        if ($this->structures->removeElement($structure)) {
-            // set the owning side to null (unless already changed)
-            if ($structure->getSubdivision() === $this) {
-                $structure->setSubdivision(null);
-            }
-        }
 
         return $this;
     }

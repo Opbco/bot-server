@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\SubDivisionRepository;
+use App\Repository\LangueRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,27 +12,25 @@ use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
-#[ORM\Entity(repositoryClass: SubDivisionRepository::class)]
+#[ORM\Entity(repositoryClass: LangueRepository::class)]
 #[ApiResource]
-class SubDivision
+class Langue
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["subdivision.details", "subdivision.list", "structure.details", "structure.list"])]
+    #[Groups(["structure.details", "structure.list"])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100, unique: true)]
-    #[Groups(["subdivision.details", "subdivision.list", "structure.details", "structure.list"])]
-    private ?string $name = null;
+    #[ORM\Column(length: 10)]
+    #[Groups(["structure.details", "structure.list"])]
+    private ?string $code = null;
 
-    #[ORM\ManyToOne(inversedBy: 'subDivisions')]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["subdivision.details", "structure.details", "structure.list"])]
-    private ?Division $division = null;
+    #[ORM\Column(length: 50)]
+    #[Groups(["structure.details", "structure.list"])]
+    private ?string $label = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(["subdivision.details", "subdivision.list"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -40,7 +38,6 @@ class SubDivision
     private ?\DateTimeInterface $date_created = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(["subdivision.details"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -49,18 +46,21 @@ class SubDivision
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["subdivision.details", "subdivision.list"])]
     private ?User $user_created = null;
 
     #[ORM\ManyToOne]
     private ?User $user_updated = null;
 
-    #[ORM\OneToMany(mappedBy: 'subdivision', targetEntity: Structure::class)]
+    #[ORM\OneToMany(mappedBy: 'langue', targetEntity: Structure::class)]
     private Collection $structures;
+
+    #[ORM\OneToMany(mappedBy: 'langue', targetEntity: TypeDocument::class)]
+    private Collection $typeDocuments;
 
     public function __construct()
     {
         $this->structures = new ArrayCollection();
+        $this->typeDocuments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -68,33 +68,28 @@ class SubDivision
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getCode(): ?string
     {
-        return $this->name;
+        return $this->code;
     }
 
-    public function setName(string $name): self
+    public function setCode(string $code): self
     {
-        $this->name = $name;
+        $this->code = $code;
 
         return $this;
     }
 
-    public function getDivision(): ?Division
+    public function getLabel(): ?string
     {
-        return $this->division;
+        return $this->label;
     }
 
-    public function setDivision(?Division $division): self
+    public function setLabel(string $label): self
     {
-        $this->division = $division;
+        $this->label = $label;
 
         return $this;
-    }
-
-    public function __toString()
-    {
-        return $this->name;
     }
 
     public function getDateCreated(): ?\DateTimeInterface
@@ -145,6 +140,11 @@ class SubDivision
         return $this;
     }
 
+    public function __toString()
+    {
+        return $this->label;
+    }
+
     /**
      * @return Collection<int, Structure>
      */
@@ -157,7 +157,7 @@ class SubDivision
     {
         if (!$this->structures->contains($structure)) {
             $this->structures->add($structure);
-            $structure->setSubdivision($this);
+            $structure->setLangue($this);
         }
 
         return $this;
@@ -167,8 +167,38 @@ class SubDivision
     {
         if ($this->structures->removeElement($structure)) {
             // set the owning side to null (unless already changed)
-            if ($structure->getSubdivision() === $this) {
-                $structure->setSubdivision(null);
+            if ($structure->getLangue() === $this) {
+                $structure->setLangue(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TypeDocument>
+     */
+    public function getTypeDocuments(): Collection
+    {
+        return $this->typeDocuments;
+    }
+
+    public function addTypeDocument(TypeDocument $typeDocument): self
+    {
+        if (!$this->typeDocuments->contains($typeDocument)) {
+            $this->typeDocuments->add($typeDocument);
+            $typeDocument->setLangue($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTypeDocument(TypeDocument $typeDocument): self
+    {
+        if ($this->typeDocuments->removeElement($typeDocument)) {
+            // set the owning side to null (unless already changed)
+            if ($typeDocument->getLangue() === $this) {
+                $typeDocument->setLangue(null);
             }
         }
 

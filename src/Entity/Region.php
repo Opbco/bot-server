@@ -19,11 +19,11 @@ class Region
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["region.details", "region.list", "division.details", "subdivision.details"])]
+    #[Groups(["region.details", "region.list", "division.details", "subdivision.details", "structure.details", "structure.list"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50, unique: true)]
-    #[Groups(["region.details", "region.list", "division.details", "subdivision.details"])]
+    #[Groups(["region.details", "region.list", "division.details", "subdivision.details", "structure.details", "structure.list"])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
