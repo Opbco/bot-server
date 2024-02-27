@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\TypeDocumentRepository;
+use App\Repository\TypeDossierRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -12,9 +12,9 @@ use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
-#[ORM\Entity(repositoryClass: TypeDocumentRepository::class)]
+#[ORM\Entity(repositoryClass: TypeDossierRepository::class)]
 #[ApiResource]
-class TypeDocument
+class TypeDossier
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,8 +35,8 @@ class TypeDocument
     #[ORM\JoinColumn(nullable: false)]
     private ?Service $service = null;
 
-    #[ORM\OneToMany(mappedBy: 'typeDocument', targetEntity: TypeDocumentPieces::class)]
-    private Collection $typeDocumentPieces;
+    #[ORM\OneToMany(mappedBy: 'typeDossier', targetEntity: TypeDossierPieces::class)]
+    private Collection $typeDossierPieces;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Context(
@@ -61,7 +61,7 @@ class TypeDocument
 
     public function __construct()
     {
-        $this->typeDocumentPieces = new ArrayCollection();
+        $this->typeDossierPieces = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -120,27 +120,27 @@ class TypeDocument
     /**
      * @return Collection<int, TypeDocumentPieces>
      */
-    public function getTypeDocumentPieces(): Collection
+    public function getTypeDossierPieces(): Collection
     {
-        return $this->typeDocumentPieces;
+        return $this->typeDossierPieces;
     }
 
-    public function addTypeDocumentPiece(TypeDocumentPieces $typeDocumentPiece): self
+    public function addTypeDossierPiece(typeDossierPieces $typeDocumentPiece): self
     {
-        if (!$this->typeDocumentPieces->contains($typeDocumentPiece)) {
-            $this->typeDocumentPieces->add($typeDocumentPiece);
-            $typeDocumentPiece->setTypeDocument($this);
+        if (!$this->typeDossierPieces->contains($typeDocumentPiece)) {
+            $this->typeDossierPieces->add($typeDocumentPiece);
+            $typeDocumentPiece->setTypeDossier($this);
         }
 
         return $this;
     }
 
-    public function removeTypeDocumentPiece(TypeDocumentPieces $typeDocumentPiece): self
+    public function removeTypeDossierPiece(TypeDossierPieces $typeDocumentPiece): self
     {
-        if ($this->typeDocumentPieces->removeElement($typeDocumentPiece)) {
+        if ($this->typeDossierPieces->removeElement($typeDocumentPiece)) {
             // set the owning side to null (unless already changed)
-            if ($typeDocumentPiece->getTypeDocument() === $this) {
-                $typeDocumentPiece->setTypeDocument(null);
+            if ($typeDocumentPiece->getTypeDossier() === $this) {
+                $typeDocumentPiece->setTypeDossier(null);
             }
         }
 

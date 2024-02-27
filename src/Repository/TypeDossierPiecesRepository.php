@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\TypeDocument;
+use App\Entity\TypeDossierPieces;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<TypeDocument>
+ * @extends ServiceEntityRepository<TypeDocumentPieces>
  *
- * @method TypeDocument|null find($id, $lockMode = null, $lockVersion = null)
- * @method TypeDocument|null findOneBy(array $criteria, array $orderBy = null)
- * @method TypeDocument[]    findAll()
- * @method TypeDocument[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method TypeDossierPieces|null find($id, $lockMode = null, $lockVersion = null)
+ * @method TypeDossierPieces|null findOneBy(array $criteria, array $orderBy = null)
+ * @method TypeDossierPieces[]    findAll()
+ * @method TypeDossierPieces[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TypeDocumentRepository extends ServiceEntityRepository
+class TypeDossierPiecesRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, TypeDocument::class);
+        parent::__construct($registry, TypeDossierPieces::class);
     }
 
-    public function save(TypeDocument $entity, bool $flush = false): void
+    public function save(TypeDossierPieces $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class TypeDocumentRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(TypeDocument $entity, bool $flush = false): void
+    public function remove(TypeDossierPieces $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class TypeDocumentRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return TypeDocument[] Returns an array of TypeDocument objects
+//     * @return TypeDossierPieces[] Returns an array of TypeDossierPieces objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class TypeDocumentRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?TypeDocument
+//    public function findOneBySomeField($value): ?TypeDossierPieces
 //    {
 //        return $this->createQueryBuilder('t')
 //            ->andWhere('t.exampleField = :val')

@@ -30,8 +30,8 @@ class PieceRequise
     #[Groups(["piece.details", "piece.list"])]
     private ?string $signataire = null;
 
-    #[ORM\OneToMany(mappedBy: 'pieceRequise', targetEntity: TypeDocumentPieces::class)]
-    private Collection $typeDocumentPieces;
+    #[ORM\OneToMany(mappedBy: 'pieceRequise', targetEntity: TypeDossierPieces::class)]
+    private Collection $typeDossierPieces;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Context(
@@ -56,7 +56,7 @@ class PieceRequise
 
     public function __construct()
     {
-        $this->typeDocumentPieces = new ArrayCollection();
+        $this->typeDossierPieces = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -89,26 +89,26 @@ class PieceRequise
     }
 
     /**
-     * @return Collection<int, TypeDocumentPieces>
+     * @return Collection<int, TypeDossierPieces>
      */
-    public function getTypeDocumentPieces(): Collection
+    public function getTypeDossierPieces(): Collection
     {
-        return $this->typeDocumentPieces;
+        return $this->typeDossierPieces;
     }
 
-    public function addTypeDocumentPiece(TypeDocumentPieces $typeDocumentPiece): self
+    public function addTypeDossierPieces(TypeDossierPieces $typeDocumentPiece): self
     {
-        if (!$this->typeDocumentPieces->contains($typeDocumentPiece)) {
-            $this->typeDocumentPieces->add($typeDocumentPiece);
+        if (!$this->typeDossierPieces->contains($typeDocumentPiece)) {
+            $this->typeDossierPieces->add($typeDocumentPiece);
             $typeDocumentPiece->setPieceRequise($this);
         }
 
         return $this;
     }
 
-    public function removeTypeDocumentPiece(TypeDocumentPieces $typeDocumentPiece): self
+    public function removeTypeDocumentPiece(TypeDossierPieces $typeDocumentPiece): self
     {
-        if ($this->typeDocumentPieces->removeElement($typeDocumentPiece)) {
+        if ($this->typeDossierPieces->removeElement($typeDocumentPiece)) {
             // set the owning side to null (unless already changed)
             if ($typeDocumentPiece->getPieceRequise() === $this) {
                 $typeDocumentPiece->setPieceRequise(null);

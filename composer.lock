@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c260b5321b869c049c54da8791b90d11",
+    "content-hash": "4e9df1a7e57fd20311d7d24c30040219",
     "packages": [
         {
             "name": "api-platform/core",
@@ -2554,6 +2554,59 @@
                 }
             ],
             "time": "2023-02-13T12:30:12+00:00"
+        },
+        {
+            "name": "mobiweb/sdk",
+            "version": "3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mobiweb/mobiweb-php.git",
+                "reference": "265c6fdc6305f99e04612678c0c25004b970fdaf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mobiweb/mobiweb-php/zipball/265c6fdc6305f99e04612678c0c25004b970fdaf",
+                "reference": "265c6fdc6305f99e04612678c0c25004b970fdaf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MobiWeb\\": "src/MobiWeb/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "MobiWeb Tech Team",
+                    "email": "sales@solutions4mobiles.com",
+                    "homepage": "https://www.solutions4mobiles.com"
+                }
+            ],
+            "description": "2.0.1 PHP library for communicating with the MobiWeb REST APIs.",
+            "homepage": "https://api.solutions4mobiles.com/index.html",
+            "keywords": [
+                "api",
+                "hlr",
+                "hlr lookup",
+                "messaging",
+                "mobile lookup",
+                "mobile number lookup",
+                "mobiweb",
+                "php",
+                "sms"
+            ],
+            "support": {
+                "issues": "https://github.com/mobiweb/mobiweb-php/issues",
+                "source": "https://github.com/mobiweb/mobiweb-php"
+            },
+            "time": "2023-04-21T07:00:11+00:00"
         },
         {
             "name": "monolog/monolog",

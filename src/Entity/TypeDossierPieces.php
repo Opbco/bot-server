@@ -2,28 +2,28 @@
 
 namespace App\Entity;
 
-use App\Repository\TypeDocumentPiecesRepository;
+use App\Repository\TypeDossierPiecesRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
-#[ORM\Entity(repositoryClass: TypeDocumentPiecesRepository::class)]
-class TypeDocumentPieces
+#[ORM\Entity(repositoryClass: TypeDossierPiecesRepository::class)]
+class TypeDossierPieces
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'typeDocumentPieces')]
+    #[ORM\ManyToOne(inversedBy: 'typeDossierPieces')]
     #[ORM\JoinColumn(nullable: false)]
     private ?PieceRequise $pieceRequise = null;
 
-    #[ORM\ManyToOne(inversedBy: 'typeDocumentPieces')]
+    #[ORM\ManyToOne(inversedBy: 'typeDossierPieces')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?TypeDocument $typeDocument = null;
+    private ?TypeDossier $typeDossier = null;
 
     #[ORM\Column]
     private ?int $nbPiece = null;
@@ -66,14 +66,14 @@ class TypeDocumentPieces
         return $this;
     }
 
-    public function getTypeDocument(): ?TypeDocument
+    public function getTypeDossier(): ?TypeDossier
     {
-        return $this->typeDocument;
+        return $this->typeDossier;
     }
 
-    public function setTypeDocument(?TypeDocument $typeDocument): self
+    public function setTypeDossier(?TypeDossier $typeDocument): self
     {
-        $this->typeDocument = $typeDocument;
+        $this->typeDossier = $typeDocument;
 
         return $this;
     }

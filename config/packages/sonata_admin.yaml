@@ -1,6 +1,12 @@
 sonata_admin:
-  title: "HMIS-ROSAIRE"
+  title: "MINESEC COURRIER"
   show_mosaic_button: false
+  
+  assets:
+    extra_stylesheets:
+      - admin/admin.css
+    extra_javascripts:
+      - admin/admin.js
   
   dashboard:
     blocks:
