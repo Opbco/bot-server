@@ -3,37 +3,35 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\FonctionFormStructureRepository;
-use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PieceDossierRepository;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
-#[ORM\Entity(repositoryClass: FonctionFormStructureRepository::class)]
+#[ORM\Entity(repositoryClass: PieceDossierRepository::class)]
 #[ApiResource]
-class FonctionFormStructure
+class PieceDossier
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["fonction.details"])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'fonctionFormStructures')]
+    #[ORM\ManyToOne(inversedBy: 'pieces')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["fonction.details"])]
-    private ?FormStructure $formstructure = null;
+    private ?Dossier $dossier = null;
 
-    #[ORM\ManyToOne(inversedBy: 'fonctionFormStructures')]
+    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Fonction $fonction = null;
+    private ?PieceRequise $piece = null;
 
-    #[ORM\Column(options: ["default" => 0])]
-    #[Groups(["fonction.details"])]
-    private ?int $nbPosition = null;
+    #[ORM\Column]
+    private ?int $nombre = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["piece_dossier.details", "piece_dossier.list"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -41,6 +39,7 @@ class FonctionFormStructure
     private ?\DateTimeInterface $date_created = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(["piece_dossier.details"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -49,53 +48,50 @@ class FonctionFormStructure
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["piece_dossier.details", "piece_dossier.list"])]
     private ?User $user_created = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user_updated = null;
-
-    public function __toString()
-    {
-        return $this->nbPosition . ' ' . $this->fonction . ' - ' . $this->formstructure;
-    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getFormstructure(): ?FormStructure
+    public function getDossier(): ?Dossier
     {
-        return $this->formstructure;
+        return $this->dossier;
     }
 
-    public function setFormstructure(?FormStructure $formstructure): self
+    public function setDosssier(?Dossier $dossier): self
     {
-        $this->formstructure = $formstructure;
+        $this->dossier = $dossier;
 
         return $this;
     }
 
-    public function getFonction(): ?Fonction
+    public function getPiece(): ?PieceRequise
     {
-        return $this->fonction;
+        return $this->piece;
     }
 
-    public function setFonction(?Fonction $fonction): self
+    public function setPiece(?PieceRequise $piece): self
     {
-        $this->fonction = $fonction;
+        $this->piece = $piece;
 
         return $this;
     }
 
-    public function getNbPosition(): ?int
+    public function getNombre(): ?int
     {
-        return $this->nbPosition;
+        return $this->nombre;
     }
 
-    public function setNbPosition(int $nbPosition): self
+    public function setNombre(int $nombre): self
     {
-        $this->nbPosition = $nbPosition;
+        $this->nombre = $nombre;
 
         return $this;
     }
@@ -120,6 +116,13 @@ class FonctionFormStructure
     public function setDateUpdated(?\DateTimeInterface $date_updated): self
     {
         $this->date_updated = $date_updated;
+
+        return $this;
+    }
+
+    public function setDossier(?Dossier $dossier): self
+    {
+        $this->dossier = $dossier;
 
         return $this;
     }

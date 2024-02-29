@@ -54,9 +54,22 @@ class PieceRequise
     #[ORM\ManyToOne]
     private ?User $user_updated = null;
 
+    #[ORM\OneToMany(mappedBy: 'piece', targetEntity: PieceToComplete::class)]
+    private Collection $pieceToCompletes;
+
+    #[ORM\Column(length: 255)]
+    private ?string $namen = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $signataireng = null;
+
+    #[ORM\Column(options: ['default' => true])]
+    private ?bool $obligatory = null;
+
     public function __construct()
     {
         $this->typeDossierPieces = new ArrayCollection();
+        $this->pieceToCompletes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,6 +175,72 @@ class PieceRequise
     public function setUserUpdated(?User $user_updated): self
     {
         $this->user_updated = $user_updated;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PieceToComplete>
+     */
+    public function getPieceToCompletes(): Collection
+    {
+        return $this->pieceToCompletes;
+    }
+
+    public function addPieceToComplete(PieceToComplete $pieceToComplete): self
+    {
+        if (!$this->pieceToCompletes->contains($pieceToComplete)) {
+            $this->pieceToCompletes->add($pieceToComplete);
+            $pieceToComplete->setPiece($this);
+        }
+
+        return $this;
+    }
+
+    public function removePieceToComplete(PieceToComplete $pieceToComplete): self
+    {
+        if ($this->pieceToCompletes->removeElement($pieceToComplete)) {
+            // set the owning side to null (unless already changed)
+            if ($pieceToComplete->getPiece() === $this) {
+                $pieceToComplete->setPiece(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNamen(): ?string
+    {
+        return $this->namen;
+    }
+
+    public function setNamen(string $namen): self
+    {
+        $this->namen = $namen;
+
+        return $this;
+    }
+
+    public function getSignataireng(): ?string
+    {
+        return $this->signataireng;
+    }
+
+    public function setSignataireng(string $signataireng): self
+    {
+        $this->signataireng = $signataireng;
+
+        return $this;
+    }
+
+    public function isObligatory(): ?bool
+    {
+        return $this->obligatory;
+    }
+
+    public function setObligatory(bool $obligatory): self
+    {
+        $this->obligatory = $obligatory;
 
         return $this;
     }

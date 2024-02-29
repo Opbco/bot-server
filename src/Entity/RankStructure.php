@@ -2,32 +2,31 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\FormStructureRepository;
+use App\Repository\RankStructureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
-#[ORM\Entity(repositoryClass: FormStructureRepository::class)]
-#[ApiResource]
-class FormStructure
+#[ORM\Entity(repositoryClass: RankStructureRepository::class)]
+class RankStructure
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["form.details", "form.list", "structure.details", "structure.list"])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100, unique: true)]
-    #[Groups(["form.details", "form.list", "structure.details", "structure.list"])]
+    #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\OneToMany(mappedBy: 'rank', targetEntity: Structure::class)]
+    private Collection $structures;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(["form.details", "form.list"])]
+    #[Groups(["rank_structure.details", "rank_structure.list"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -35,7 +34,7 @@ class FormStructure
     private ?\DateTimeInterface $date_created = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(["form.details"])]
+    #[Groups(["rank_structure.details"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -44,14 +43,12 @@ class FormStructure
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["form.details", "form.list"])]
+    #[Groups(["rank_structure.details", "rank_structure.list"])]
     private ?User $user_created = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user_updated = null;
-
-    #[ORM\OneToMany(mappedBy: 'forme', targetEntity: Structure::class)]
-    private Collection $structures;
 
     public function __construct()
     {
@@ -71,6 +68,36 @@ class FormStructure
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Structure>
+     */
+    public function getStructures(): Collection
+    {
+        return $this->structures;
+    }
+
+    public function addStructure(Structure $structure): self
+    {
+        if (!$this->structures->contains($structure)) {
+            $this->structures->add($structure);
+            $structure->setRank($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStructure(Structure $structure): self
+    {
+        if ($this->structures->removeElement($structure)) {
+            // set the owning side to null (unless already changed)
+            if ($structure->getRank() === $this) {
+                $structure->setRank(null);
+            }
+        }
 
         return $this;
     }
@@ -119,41 +146,6 @@ class FormStructure
     public function setUserUpdated(?User $user_updated): self
     {
         $this->user_updated = $user_updated;
-
-        return $this;
-    }
-
-    public function __toString()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return Collection<int, Structure>
-     */
-    public function getStructures(): Collection
-    {
-        return $this->structures;
-    }
-
-    public function addStructure(Structure $structure): self
-    {
-        if (!$this->structures->contains($structure)) {
-            $this->structures->add($structure);
-            $structure->setForme($this);
-        }
-
-        return $this;
-    }
-
-    public function removeStructure(Structure $structure): self
-    {
-        if ($this->structures->removeElement($structure)) {
-            // set the owning side to null (unless already changed)
-            if ($structure->getForme() === $this) {
-                $structure->setForme(null);
-            }
-        }
 
         return $this;
     }

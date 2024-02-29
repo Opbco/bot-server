@@ -53,12 +53,12 @@ class TypeStructure
     #[ORM\ManyToOne]
     private ?User $user_updated = null;
 
-    #[ORM\OneToMany(mappedBy: 'typeStructure', targetEntity: FormStructure::class, orphanRemoval: true)]
-    private Collection $formStructures;
+    #[ORM\OneToMany(mappedBy: 'typeStructure', targetEntity: Structure::class)]
+    private Collection $structures;
 
     public function __construct()
     {
-        $this->formStructures = new ArrayCollection();
+        $this->structures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -144,29 +144,29 @@ class TypeStructure
     }
 
     /**
-     * @return Collection<int, FormStructure>
+     * @return Collection<int, Structure>
      */
-    public function getFormStructures(): Collection
+    public function getStructures(): Collection
     {
-        return $this->formStructures;
+        return $this->structures;
     }
 
-    public function addFormStructure(FormStructure $formStructure): self
+    public function addStructure(Structure $structure): self
     {
-        if (!$this->formStructures->contains($formStructure)) {
-            $this->formStructures->add($formStructure);
-            $formStructure->setTypeStructure($this);
+        if (!$this->structures->contains($structure)) {
+            $this->structures->add($structure);
+            $structure->setTypeStructure($this);
         }
 
         return $this;
     }
 
-    public function removeFormStructure(FormStructure $formStructure): self
+    public function removeStructure(Structure $structure): self
     {
-        if ($this->formStructures->removeElement($formStructure)) {
+        if ($this->structures->removeElement($structure)) {
             // set the owning side to null (unless already changed)
-            if ($formStructure->getTypeStructure() === $this) {
-                $formStructure->setTypeStructure(null);
+            if ($structure->getTypeStructure() === $this) {
+                $structure->setTypeStructure(null);
             }
         }
 

@@ -48,7 +48,7 @@ class Structure
     private ?Order $ordre = null;
 
     #[ORM\ManyToOne(inversedBy: 'structures')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     #[Groups(["structure.details", "structure.list "])]
     private ?FormStructure $forme = null;
 
@@ -64,7 +64,7 @@ class Structure
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
     )]
     private ?\DateTimeInterface $date_created = null;
-
+  
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Groups(["structure.details"])]
     #[Context(
@@ -89,9 +89,22 @@ class Structure
     #[ORM\OneToMany(mappedBy: 'structure', targetEntity: Service::class)]
     private Collection $services;
 
+    #[ORM\ManyToOne(inversedBy: 'structures')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["structure.details", "structure.list "])]
+    private ?RankStructure $rank = null;
+
+    #[ORM\ManyToOne(inversedBy: 'structures')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?TypeStructure $typeStructure = null;
+
+    #[ORM\OneToMany(mappedBy: 'structure', targetEntity: Personne::class)]
+    private Collection $personnes;
+
     public function __construct()
     {
         $this->services = new ArrayCollection();
+        $this->personnes = new ArrayCollection();
     }
 
     public function __toString()
@@ -284,6 +297,60 @@ class Structure
             // set the owning side to null (unless already changed)
             if ($service->getStructure() === $this) {
                 $service->setStructure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getRank(): ?RankStructure
+    {
+        return $this->rank;
+    }
+
+    public function setRank(?RankStructure $rank): self
+    {
+        $this->rank = $rank;
+
+        return $this;
+    }
+
+    public function getTypeStructure(): ?TypeStructure
+    {
+        return $this->typeStructure;
+    }
+
+    public function setTypeStructure(?TypeStructure $typeStructure): self
+    {
+        $this->typeStructure = $typeStructure;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Personne>
+     */
+    public function getPersonnes(): Collection
+    {
+        return $this->personnes;
+    }
+
+    public function addPersonne(Personne $personne): self
+    {
+        if (!$this->personnes->contains($personne)) {
+            $this->personnes->add($personne);
+            $personne->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonne(Personne $personne): self
+    {
+        if ($this->personnes->removeElement($personne)) {
+            // set the owning side to null (unless already changed)
+            if ($personne->getStructure() === $this) {
+                $personne->setStructure(null);
             }
         }
 

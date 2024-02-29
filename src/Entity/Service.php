@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Serializer\Annotation\Context;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
@@ -33,7 +32,7 @@ class Service
     #[ORM\JoinColumn(nullable: false)]
     private ?Fonction $fonction = null;
 
-    #[ORM\OneToMany(mappedBy: 'service', targetEntity: TypeDocument::class)]
+    #[ORM\OneToMany(mappedBy: 'service', targetEntity: TypeDossier::class)]
     private Collection $typeDocuments;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -57,9 +56,17 @@ class Service
     #[ORM\ManyToOne]
     private ?User $user_updated = null;
 
+    #[ORM\OneToMany(mappedBy: 'service', targetEntity: Personne::class)]
+    private Collection $personnes;
+
+    #[ORM\OneToMany(mappedBy: 'service', targetEntity: Dossier::class)]
+    private Collection $dossiers;
+
     public function __construct()
     {
         $this->typeDocuments = new ArrayCollection();
+        $this->personnes = new ArrayCollection();
+        $this->dossiers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -116,14 +123,14 @@ class Service
     }
 
     /**
-     * @return Collection<int, TypeDocument>
+     * @return Collection<int, TypeDossier>
      */
     public function getTypeDocuments(): Collection
     {
         return $this->typeDocuments;
     }
 
-    public function addTypeDocument(TypeDocument $typeDocument): self
+    public function addTypeDocument(TypeDossier $typeDocument): self
     {
         if (!$this->typeDocuments->contains($typeDocument)) {
             $this->typeDocuments->add($typeDocument);
@@ -133,7 +140,7 @@ class Service
         return $this;
     }
 
-    public function removeTypeDocument(TypeDocument $typeDocument): self
+    public function removeTypeDocument(TypeDossier $typeDocument): self
     {
         if ($this->typeDocuments->removeElement($typeDocument)) {
             // set the owning side to null (unless already changed)
@@ -189,6 +196,66 @@ class Service
     public function setUserUpdated(?User $user_updated): self
     {
         $this->user_updated = $user_updated;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Personne>
+     */
+    public function getPersonnes(): Collection
+    {
+        return $this->personnes;
+    }
+
+    public function addPersonne(Personne $personne): self
+    {
+        if (!$this->personnes->contains($personne)) {
+            $this->personnes->add($personne);
+            $personne->setService($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonne(Personne $personne): self
+    {
+        if ($this->personnes->removeElement($personne)) {
+            // set the owning side to null (unless already changed)
+            if ($personne->getService() === $this) {
+                $personne->setService(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Dossier>
+     */
+    public function getDossiers(): Collection
+    {
+        return $this->dossiers;
+    }
+
+    public function addDossier(Dossier $dossier): self
+    {
+        if (!$this->dossiers->contains($dossier)) {
+            $this->dossiers->add($dossier);
+            $dossier->setService($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDossier(Dossier $dossier): self
+    {
+        if ($this->dossiers->removeElement($dossier)) {
+            // set the owning side to null (unless already changed)
+            if ($dossier->getService() === $this) {
+                $dossier->setService(null);
+            }
+        }
 
         return $this;
     }

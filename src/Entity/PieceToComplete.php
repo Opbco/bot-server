@@ -3,31 +3,38 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\FormStructureRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PieceToCompleteRepository;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
-#[ORM\Entity(repositoryClass: FormStructureRepository::class)]
+#[ORM\Entity(repositoryClass: PieceToCompleteRepository::class)]
 #[ApiResource]
-class FormStructure
+class PieceToComplete
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["form.details", "form.list", "structure.details", "structure.list"])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100, unique: true)]
-    #[Groups(["form.details", "form.list", "structure.details", "structure.list"])]
-    private ?string $name = null;
+    #[ORM\ManyToOne(inversedBy: 'pieceToCompletes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Dossier $dossier = null;
+
+    #[ORM\ManyToOne(inversedBy: 'pieceToCompletes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?PieceRequise $piece = null;
+
+    #[ORM\Column]
+    private ?bool $completed = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(["form.details", "form.list"])]
+    private ?\DateTimeInterface $dateCompleted = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["piece_complete.details", "piece_complete.list"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -35,7 +42,7 @@ class FormStructure
     private ?\DateTimeInterface $date_created = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(["form.details"])]
+    #[Groups(["piece_complete.details"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -44,33 +51,62 @@ class FormStructure
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["form.details", "form.list"])]
+    #[Groups(["piece_complete.details", "piece_complete.list"])]
     private ?User $user_created = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user_updated = null;
-
-    #[ORM\OneToMany(mappedBy: 'forme', targetEntity: Structure::class)]
-    private Collection $structures;
-
-    public function __construct()
-    {
-        $this->structures = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getDossier(): ?Dossier
     {
-        return $this->name;
+        return $this->dossier;
     }
 
-    public function setName(string $name): self
+    public function setDossier(?Dossier $dossier): self
     {
-        $this->name = $name;
+        $this->dossier = $dossier;
+
+        return $this;
+    }
+
+    public function getPiece(): ?PieceRequise
+    {
+        return $this->piece;
+    }
+
+    public function setPiece(?PieceRequise $piece): self
+    {
+        $this->piece = $piece;
+
+        return $this;
+    }
+
+    public function isCompleted(): ?bool
+    {
+        return $this->completed;
+    }
+
+    public function setCompleted(bool $completed): self
+    {
+        $this->completed = $completed;
+
+        return $this;
+    }
+
+    public function getDateCompleted(): ?\DateTimeInterface
+    {
+        return $this->dateCompleted;
+    }
+
+    public function setDateCompleted(\DateTimeInterface $dateCompleted): self
+    {
+        $this->dateCompleted = $dateCompleted;
 
         return $this;
     }
@@ -119,41 +155,6 @@ class FormStructure
     public function setUserUpdated(?User $user_updated): self
     {
         $this->user_updated = $user_updated;
-
-        return $this;
-    }
-
-    public function __toString()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return Collection<int, Structure>
-     */
-    public function getStructures(): Collection
-    {
-        return $this->structures;
-    }
-
-    public function addStructure(Structure $structure): self
-    {
-        if (!$this->structures->contains($structure)) {
-            $this->structures->add($structure);
-            $structure->setForme($this);
-        }
-
-        return $this;
-    }
-
-    public function removeStructure(Structure $structure): self
-    {
-        if ($this->structures->removeElement($structure)) {
-            // set the owning side to null (unless already changed)
-            if ($structure->getForme() === $this) {
-                $structure->setForme(null);
-            }
-        }
 
         return $this;
     }

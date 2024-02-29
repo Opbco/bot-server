@@ -54,15 +54,11 @@ class Fonction
     #[ORM\ManyToOne]
     private ?User $user_updated = null;
 
-    #[ORM\OneToMany(mappedBy: 'fonction', targetEntity: FonctionFormStructure::class, orphanRemoval: true)]
-    private Collection $fonctionFormStructures;
-
     #[ORM\OneToMany(mappedBy: 'fonction', targetEntity: Service::class)]
     private Collection $services;
 
     public function __construct()
     {
-        $this->fonctionFormStructures = new ArrayCollection();
         $this->services = new ArrayCollection();
     }
 
@@ -144,36 +140,6 @@ class Fonction
     public function setUserUpdated(?User $user_updated): self
     {
         $this->user_updated = $user_updated;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, FonctionFormStructure>
-     */
-    public function getFonctionFormStructures(): Collection
-    {
-        return $this->fonctionFormStructures;
-    }
-
-    public function addFonctionFormStructure(FonctionFormStructure $fonctionFormStructure): self
-    {
-        if (!$this->fonctionFormStructures->contains($fonctionFormStructure)) {
-            $this->fonctionFormStructures->add($fonctionFormStructure);
-            $fonctionFormStructure->setFonction($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFonctionFormStructure(FonctionFormStructure $fonctionFormStructure): self
-    {
-        if ($this->fonctionFormStructures->removeElement($fonctionFormStructure)) {
-            // set the owning side to null (unless already changed)
-            if ($fonctionFormStructure->getFonction() === $this) {
-                $fonctionFormStructure->setFonction(null);
-            }
-        }
 
         return $this;
     }

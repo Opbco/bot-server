@@ -3,34 +3,40 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\LangueRepository;
+use App\Repository\BordereauRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
-#[ORM\Entity(repositoryClass: LangueRepository::class)]
+#[ORM\Entity(repositoryClass: BordereauRepository::class)]
 #[ApiResource]
-class Langue
+class Bordereau
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["structure.details", "structure.list"])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 10)]
-    #[Groups(["structure.details", "structure.list"])]
-    private ?string $code = null;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Service $emetteur = null;
 
-    #[ORM\Column(length: 50)]
-    #[Groups(["structure.details", "structure.list"])]
-    private ?string $label = null;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Service $recepteur = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $statut = null;
+
+    #[ORM\ManyToMany(targetEntity: Dossier::class, inversedBy: 'bordereaus')]
+    private Collection $dossiers;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["bordereau.details", "bordereau.list"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -38,6 +44,7 @@ class Langue
     private ?\DateTimeInterface $date_created = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(["bordereau.details"])]
     #[Context(
         normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i'],
         denormalizationContext: [DateTimeNormalizer::FORMAT_KEY => \DateTime::RFC3339],
@@ -46,18 +53,16 @@ class Langue
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["bordereau.details", "bordereau.list"])]
     private ?User $user_created = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user_updated = null;
-
-    #[ORM\OneToMany(mappedBy: 'langue', targetEntity: Structure::class)]
-    private Collection $structures;
-
 
     public function __construct()
     {
-        $this->structures = new ArrayCollection();
+        $this->dossiers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -65,26 +70,62 @@ class Langue
         return $this->id;
     }
 
-    public function getCode(): ?string
+    public function getEmetteur(): ?Service
     {
-        return $this->code;
+        return $this->emetteur;
     }
 
-    public function setCode(string $code): self
+    public function setEmetteur(?Service $emetteur): self
     {
-        $this->code = $code;
+        $this->emetteur = $emetteur;
 
         return $this;
     }
 
-    public function getLabel(): ?string
+    public function getRecepteur(): ?Service
     {
-        return $this->label;
+        return $this->recepteur;
     }
 
-    public function setLabel(string $label): self
+    public function setRecepteur(?Service $recepteur): self
     {
-        $this->label = $label;
+        $this->recepteur = $recepteur;
+
+        return $this;
+    }
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): self
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Dossier>
+     */
+    public function getDossiers(): Collection
+    {
+        return $this->dossiers;
+    }
+
+    public function addDossier(Dossier $dossier): self
+    {
+        if (!$this->dossiers->contains($dossier)) {
+            $this->dossiers->add($dossier);
+        }
+
+        return $this;
+    }
+
+    public function removeDossier(Dossier $dossier): self
+    {
+        $this->dossiers->removeElement($dossier);
 
         return $this;
     }
@@ -133,41 +174,6 @@ class Langue
     public function setUserUpdated(?User $user_updated): self
     {
         $this->user_updated = $user_updated;
-
-        return $this;
-    }
-
-    public function __toString()
-    {
-        return $this->label;
-    }
-
-    /**
-     * @return Collection<int, Structure>
-     */
-    public function getStructures(): Collection
-    {
-        return $this->structures;
-    }
-
-    public function addStructure(Structure $structure): self
-    {
-        if (!$this->structures->contains($structure)) {
-            $this->structures->add($structure);
-            $structure->setLangue($this);
-        }
-
-        return $this;
-    }
-
-    public function removeStructure(Structure $structure): self
-    {
-        if ($this->structures->removeElement($structure)) {
-            // set the owning side to null (unless already changed)
-            if ($structure->getLangue() === $this) {
-                $structure->setLangue(null);
-            }
-        }
 
         return $this;
     }

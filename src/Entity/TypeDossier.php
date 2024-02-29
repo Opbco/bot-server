@@ -59,9 +59,13 @@ class TypeDossier
     #[ORM\ManyToOne]
     private ?User $user_updated = null;
 
+    #[ORM\OneToMany(mappedBy: 'typeDossier', targetEntity: Dossier::class)]
+    private Collection $dossiers;
+
     public function __construct()
     {
         $this->typeDossierPieces = new ArrayCollection();
+        $this->dossiers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -191,6 +195,36 @@ class TypeDossier
     public function setUserUpdated(?User $user_updated): self
     {
         $this->user_updated = $user_updated;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Dossier>
+     */
+    public function getDossiers(): Collection
+    {
+        return $this->dossiers;
+    }
+
+    public function addDossier(Dossier $dossier): self
+    {
+        if (!$this->dossiers->contains($dossier)) {
+            $this->dossiers->add($dossier);
+            $dossier->setTypeDossier($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDossier(Dossier $dossier): self
+    {
+        if ($this->dossiers->removeElement($dossier)) {
+            // set the owning side to null (unless already changed)
+            if ($dossier->getTypeDossier() === $this) {
+                $dossier->setTypeDossier(null);
+            }
+        }
 
         return $this;
     }
