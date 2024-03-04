@@ -2,7 +2,10 @@
 
 namespace App\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use App\Entity\Document;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreRemoveEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Symfony\Component\Security\Core\Security;
 
 class EntityListener
@@ -12,7 +15,7 @@ class EntityListener
     {
     }
 
-    public function prePersist(LifecycleEventArgs $args)
+    public function prePersist(PrePersistEventArgs $args)
     {
         $entity = $args->getObject();
 
@@ -26,7 +29,7 @@ class EntityListener
         }
     }
 
-    public function preUpdate(LifecycleEventArgs $args)
+    public function preUpdate(PreUpdateEventArgs $args)
     {
         $entity = $args->getObject();
 
@@ -37,6 +40,18 @@ class EntityListener
 
         if (property_exists($entity, 'date_updated') && $entity->getDateUpdated() === null) {
             $entity->setDateUpdated(new \DateTimeImmutable());
+        }
+    }
+
+    public function PreRemove(PreRemoveEventArgs $args)
+    {
+        $entity = $args->getObject();
+        if (!$entity instanceof Document) {
+            return;
+        }
+
+        if(file_exists($entity->getFileAbsolutePath())){
+            unlink($entity->getFileAbsolutePath());
         }
     }
 }

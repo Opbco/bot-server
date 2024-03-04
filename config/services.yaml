@@ -54,7 +54,69 @@ services:
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
 
-  #sonata admin services    
+  #sonata admin services
+  admin.region:
+    class: App\Admin\RegionAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\Region, controller: ~, manager_type: orm, group: Localisation, icon: '<i class="fa fa-location-arrow" aria-hidden="true"></i>', label: Regions }
+
+  admin.division:
+    class: App\Admin\DivisionAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\Division, controller: ~, manager_type: orm, group: Localisation, label: Divisions }
+
+  admin.sub_division:
+    class: App\Admin\SubDivisionAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\SubDivision, controller: ~, manager_type: orm, group: Localisation, label: Sub-divisions }
+
+  admin.form_structure:
+    class: App\Admin\FormStructureAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\FormStructure, controller: ~, manager_type: orm, group: Structure, icon: '<i class="fa fa-building-o"></i>', label: Forms }
+
+  admin.category:
+    class: App\Admin\CategoryAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\Category, controller: ~, manager_type: orm, group: Structure, label: Category }
+
+  admin.type_structure:
+    class: App\Admin\TypeStructureAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\TypeStructure, controller: ~, manager_type: orm, group: Structure, label: Type }
+
+  admin.order:
+    class: App\Admin\OrderAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\Order, controller: ~, manager_type: orm, group: Structure, label: Orders }
+
+  admin.langue:
+    class: App\Admin\LangueAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\Langue, controller: ~, manager_type: orm, group: Structure, label: Sub-Systems }
+
+  admin.fonction:
+    class: App\Admin\FonctionAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\Fonction, controller: ~, manager_type: orm, group: Structure, label: Job positions }
+
+  admin.piece_requise:
+    class: App\Admin\PieceRequiseAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\PieceRequise, controller: ~, manager_type: orm, icon: '<i class="fa fa-files-o"></i>', group: Applications, label: Required files }
+
+  admin.type_dossier:
+    class: App\Admin\TypeDossierAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\TypeDossier, controller: ~, manager_type: orm, group: Applications, label: Type of applications }
+    calls:
+      - [addChild, ["@admin.type_dossier_pieces", "typeDossier"]]
+
+  admin.type_dossier_pieces:
+    class: App\Admin\TypeDossierPiecesAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\TypeDossierPieces, controller: ~, manager_type: orm, group: Applications, label: TypeDossier - Pieces }
+  
   admin.document:
     class: App\Admin\DocumentAdmin
     calls:
@@ -69,3 +131,8 @@ services:
           icon: '<i class="fas fa-solid fa-building"></i>',
           label: Documents (Pictures),
         }
+
+    admin.structure:
+        class: App\Admin\StructureAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Structure, controller: ~, manager_type: orm, group: admin, label: Structure }

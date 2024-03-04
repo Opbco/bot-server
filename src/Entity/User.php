@@ -18,4 +18,5 @@ class User extends BaseUser
     #[ORM\Column]
     #[Groups(['user.list'])]
     protected ?int $id = null;
+   
 }

@@ -4,10 +4,11 @@ namespace App\EventListener;
 
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Sonata\UserBundle\Model\UserInterface;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 
 class AuthenticationSuccessListener
 {
-    public function __construct()
+    public function __construct(private RoleHierarchyInterface $roleHierarchy)
     {
     }
 
@@ -24,9 +25,10 @@ class AuthenticationSuccessListener
         }
 
         $data['data'] = array(
+            'id' => $user->getId(),
             'username' => $user->getUserIdentifier(),
             'email' => $user->getEmail(),
-            'role' => $user->getRealRoles(),
+            'role' => $this->roleHierarchy->getReachableRoleNames($user->getRealRoles()),
         );
 
         $event->setData($data);

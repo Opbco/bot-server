@@ -137,4 +137,9 @@ class TypeDossierPieces
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->typeDossier->getSubjecten(). ' ' .$this->pieceRequise->getNamen();
+    }
 }

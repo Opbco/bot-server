@@ -27,15 +27,17 @@ class TypeDossier
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToOne(inversedBy: 'typeDocuments')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Langue $langue = null;
+    #[ORM\Column(length: 200)]
+    private ?string $subjecten = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $descriptionen = null;
 
     #[ORM\ManyToOne(inversedBy: 'typeDocuments')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Service $service = null;
 
-    #[ORM\OneToMany(mappedBy: 'typeDossier', targetEntity: TypeDossierPieces::class)]
+    #[ORM\OneToMany(mappedBy: 'typeDossier', targetEntity: TypeDossierPieces::class, cascade:['persist', 'remove'])]
     private Collection $typeDossierPieces;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -93,18 +95,6 @@ class TypeDossier
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getLangue(): ?Langue
-    {
-        return $this->langue;
-    }
-
-    public function setLangue(?Langue $langue): self
-    {
-        $this->langue = $langue;
 
         return $this;
     }
@@ -225,6 +215,30 @@ class TypeDossier
                 $dossier->setTypeDossier(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSubjecten(): ?string
+    {
+        return $this->subjecten;
+    }
+
+    public function setSubjecten(string $subjecten): static
+    {
+        $this->subjecten = $subjecten;
+
+        return $this;
+    }
+
+    public function getDescriptionen(): ?string
+    {
+        return $this->descriptionen;
+    }
+
+    public function setDescriptionen(?string $descriptionen): static
+    {
+        $this->descriptionen = $descriptionen;
 
         return $this;
     }

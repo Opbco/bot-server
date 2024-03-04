@@ -91,11 +91,6 @@ class Structure
 
     #[ORM\ManyToOne(inversedBy: 'structures')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["structure.details", "structure.list "])]
-    private ?RankStructure $rank = null;
-
-    #[ORM\ManyToOne(inversedBy: 'structures')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?TypeStructure $typeStructure = null;
 
     #[ORM\OneToMany(mappedBy: 'structure', targetEntity: Personne::class)]
@@ -299,18 +294,6 @@ class Structure
                 $service->setStructure(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getRank(): ?RankStructure
-    {
-        return $this->rank;
-    }
-
-    public function setRank(?RankStructure $rank): self
-    {
-        $this->rank = $rank;
 
         return $this;
     }

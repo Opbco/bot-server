@@ -38,6 +38,7 @@ class Dossier
     private Collection $pieceToCompletes;
 
     #[ORM\ManyToOne(inversedBy: 'dossiers')]
+    #[ORM\JoinColumn(nullable:true)]
     private ?Service $service = null;
 
     #[ORM\ManyToMany(targetEntity: Bordereau::class, mappedBy: 'dossiers')]
