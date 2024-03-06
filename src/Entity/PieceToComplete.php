@@ -63,6 +63,11 @@ class PieceToComplete
         return $this->id;
     }
 
+    public function __toString()
+    {
+        return $this->dossier. ' ' . $this->piece. ' '. ($this->completed? 'completed': 'to complete');
+    }
+
     public function getDossier(): ?Dossier
     {
         return $this->dossier;

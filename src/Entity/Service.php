@@ -28,11 +28,7 @@ class Service
     #[ORM\JoinColumn(nullable: false)]
     private ?Structure $structure = null;
 
-    #[ORM\ManyToOne(inversedBy: 'services')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Fonction $fonction = null;
-
-    #[ORM\OneToMany(mappedBy: 'service', targetEntity: TypeDossier::class)]
+    #[ORM\OneToMany(mappedBy: 'service', targetEntity: TypeDossier::class, cascade:['persist', 'remove'])]
     private Collection $typeDocuments;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -67,6 +63,11 @@ class Service
         $this->typeDocuments = new ArrayCollection();
         $this->personnes = new ArrayCollection();
         $this->dossiers = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->code. ' ('.$this->porte.') - '.$this->structure;
     }
 
     public function getId(): ?int
@@ -106,18 +107,6 @@ class Service
     public function setStructure(?Structure $structure): self
     {
         $this->structure = $structure;
-
-        return $this;
-    }
-
-    public function getFonction(): ?Fonction
-    {
-        return $this->fonction;
-    }
-
-    public function setFonction(?Fonction $fonction): self
-    {
-        $this->fonction = $fonction;
 
         return $this;
     }

@@ -54,12 +54,12 @@ class Fonction
     #[ORM\ManyToOne]
     private ?User $user_updated = null;
 
-    #[ORM\OneToMany(mappedBy: 'fonction', targetEntity: Service::class)]
-    private Collection $services;
+    #[ORM\OneToMany(mappedBy: 'fonction', targetEntity: Personne::class)]
+    private Collection $personnes;
 
     public function __construct()
     {
-        $this->services = new ArrayCollection();
+        $this->personnes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,29 +145,29 @@ class Fonction
     }
 
     /**
-     * @return Collection<int, Service>
+     * @return Collection<int, Personne>
      */
-    public function getServices(): Collection
+    public function getPersonnes(): Collection
     {
-        return $this->services;
+        return $this->personnes;
     }
 
-    public function addService(Service $service): self
+    public function addPersonne(Personne $personne): self
     {
-        if (!$this->services->contains($service)) {
-            $this->services->add($service);
-            $service->setFonction($this);
+        if (!$this->personnes->contains($personne)) {
+            $this->personnes->add($personne);
+            $personne->setFonction($this);
         }
 
         return $this;
     }
 
-    public function removeService(Service $service): self
+    public function removePersonne(Personne $personne): self
     {
-        if ($this->services->removeElement($service)) {
+        if ($this->personnes->removeElement($personne)) {
             // set the owning side to null (unless already changed)
-            if ($service->getFonction() === $this) {
-                $service->setFonction(null);
+            if ($personne->getFonction() === $this) {
+                $personne->setFonction(null);
             }
         }
 

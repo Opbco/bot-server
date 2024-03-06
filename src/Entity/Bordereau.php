@@ -123,6 +123,15 @@ class Bordereau
         return $this;
     }
 
+    public function setDossiers(Collection $dossiers): void
+    {
+        $this->dossiers = new ArrayCollection;
+
+        foreach ($dossiers as $one) {
+            $this->addDossier($one);
+        }
+    }
+
     public function removeDossier(Dossier $dossier): self
     {
         $this->dossiers->removeElement($dossier);
@@ -176,5 +185,10 @@ class Bordereau
         $this->user_updated = $user_updated;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->emetteur. ' --> ' .$this->recepteur. ' '.$this->date_created->format("YYYY mm dd"); 
     }
 }

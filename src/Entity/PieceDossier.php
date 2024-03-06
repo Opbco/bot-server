@@ -150,4 +150,9 @@ class PieceDossier
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->dossier. ' (' .$this->nombre.') '. $this->piece;
+    }
 }

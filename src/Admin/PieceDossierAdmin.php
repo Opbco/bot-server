@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Admin;
 
+use App\Entity\Dossier;
+use App\Entity\PieceDossier;
 use App\Entity\PieceRequise;
-use App\Entity\TypeDossier;
-use App\Entity\TypeDossierPieces;
 use App\Entity\User;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -19,30 +19,29 @@ use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\Filter\ModelFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-final class TypeDossierPiecesAdmin extends AbstractAdmin
+final class PieceDossierAdmin extends AbstractAdmin
 {
-
     public function toString(object $object): string
     {
-        return $object instanceof TypeDossierPieces
+        return $object instanceof PieceDossier
             ? $object->__toString()
-            : 'Type of application & document'; // shown in the breadcrumb on the create view
+            : 'attached documents'; // shown in the breadcrumb on the create view
     }
 
     protected function configureDatagridFilters(DatagridMapper $filter): void
     {
         $filter
             ->add('id')
-            ->add('nbPiece', null, ['label'=>'number of copies'])
-            ->add('pieceRequise', ModelFilter::class, [
+            ->add('nombre', null, ['label' => 'Nombre'])
+            ->add('piece', ModelFilter::class, [
                 'field_type' => ModelAutocompleteType::class,
                 'label' => 'document',
                 'field_options' => ['class' => PieceRequise::class, 'property' => 'namen'],
             ])
-            ->add('typeDossier', ModelFilter::class, [
+            ->add('dossier', ModelFilter::class, [
                 'field_type' => ModelAutocompleteType::class,
-                'label' => 'Type of application',
-                'field_options' => ['class' => TypeDossier::class, 'property' => 'subjecten'],
+                'label' => 'application',
+                'field_options' => ['class' => Dossier::class, 'property' => 'objet'],
             ])
             ->add('user_created', null, [
                 'label' => 'created by',
@@ -68,10 +67,10 @@ final class TypeDossierPiecesAdmin extends AbstractAdmin
     {
         $list->add('id');
             if (!$this->isChild()) {
-                $list->add('typeDossier', null, ['label'=>'application']);
+                $list->add('dossier', null, ['label'=>'application']);
             }
-        $list->add('pieceRequise', null, ['label'=>'document'])
-            ->add('nbPiece', null, ['label'=>'number of copies'])
+        $list->add('piece', null, ['label'=>'document'])
+            ->add('nombre', null, ['label'=>'number of copies'])
             ->add(ListMapper::NAME_ACTIONS, null, [
                 'actions' => [
                     'show' => [],
@@ -84,9 +83,9 @@ final class TypeDossierPiecesAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $form): void
     {
         $form
-            ->add('typeDossier', ModelType::class, ['label' => 'application', "disabled" => $this->isChild(), 'required' => true])
-            ->add('pieceRequise', ModelType::class, ['label' => 'document', 'required' => true])
-            ->add('nbPiece', null, ['label'=>'number of copies', 'required' => true])
+            ->add('dossier', ModelType::class, ['label' => 'application', "disabled" => $this->isChild(), 'required' => true])
+            ->add('piece', ModelType::class, ['label' => 'document', 'required' => true])
+            ->add('nombre', null, ['label'=>'number of copies', 'required' => true])
             ;
     }
 
@@ -94,9 +93,9 @@ final class TypeDossierPiecesAdmin extends AbstractAdmin
     {
         $show
             ->add('id')
-            ->add('typeDossier.subjecten', null, ['label' => 'application'])
-            ->add('pieceRequise.namen', null, ['label' => 'document'])
-            ->add('nbPiece', null, ['label'=>'number of copies'])
+            ->add('dossier', null, ['label' => 'application'])
+            ->add('piece', null, ['label' => 'document'])
+            ->add('nombre', null, ['label'=>'number of copies'])
             ->add('date_created', null, ['label' => 'created on'])
             ->add('date_updated', null, ['label' => 'modified on'])
             ->add('user_created.username', null, ['label' => 'created by'])

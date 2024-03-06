@@ -10,6 +10,7 @@ use App\Entity\FormStructure;
 use App\Entity\Langue;
 use App\Entity\Order;
 use App\Entity\Region;
+use App\Entity\Structure;
 use App\Entity\SubDivision;
 use App\Entity\TypeStructure;
 use App\Entity\User;
@@ -23,6 +24,12 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 final class StructureAdmin extends AbstractAdmin
 {
+    public function toString(object $object): string
+    {
+        return $object instanceof Structure
+            ? $object->__toString()
+            : 'Structure'; // shown in the breadcrumb on the create view
+    }
 
     protected function configureDatagridFilters(DatagridMapper $filter): void
     {
@@ -149,11 +156,11 @@ final class StructureAdmin extends AbstractAdmin
             ->add('codeHierarchic', null, ['label'=>'hierarchical code'])
             ->add('adresse', null, ['label'=>'address'])
             ->add('contacts', null, ['label'=>'contacts'])
-            ->add('typeStructure', ModelType::class, ['label'=>'type', 'require' => true])
-            ->add('langue', ModelType::class, ['label'=>'language|sub-system', 'require' => true])
-            ->add('forme', ModelType::class, ['label'=>'form', 'require' => true])
-            ->add('ordre', ModelType::class, ['label'=>'order', 'require' => true])
-            ->add('subdivision', ModelType::class, ['label'=>'sub-division', 'require' => true])
+            ->add('typeStructure', ModelType::class, ['label'=>'type', 'required' => true])
+            ->add('langue', ModelType::class, ['label'=>'language|sub-system', 'required' => true])
+            ->add('forme', ModelType::class, ['label'=>'form', 'required' => true])
+            ->add('ordre', ModelType::class, ['label'=>'order', 'required' => true])
+            ->add('subdivision', ModelType::class, ['label'=>'sub-division', 'required' => true])
             ;
     }
 
@@ -171,6 +178,10 @@ final class StructureAdmin extends AbstractAdmin
             ->add('forme', null, ['label'=>'form'])
             ->add('ordre', null, ['label'=>'order'])
             ->add('subdivision', null, ['label'=>'sub-division'])
+            ->add('date_created', null, ['label' => 'created on'])
+            ->add('date_updated', null, ['label' => 'modified on'])
+            ->add('user_created.username', null, ['label' => 'created by'])
+            ->add('user_updated.username', null, ['label' => 'modified by'])
             ;
     }
 }

@@ -52,9 +52,11 @@ class Personne
     private ?string $category = null;
 
     #[ORM\ManyToOne(inversedBy: 'personnes')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Structure $structure = null;
 
     #[ORM\ManyToOne(inversedBy: 'personnes')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Service $service = null;
 
     #[ORM\OneToMany(mappedBy: 'personne', targetEntity: Dossier::class)]
@@ -85,9 +87,18 @@ class Personne
     #[ORM\JoinColumn(nullable: true)]
     private ?User $user_updated = null;
 
+    #[ORM\ManyToOne(inversedBy: 'personnes')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Fonction $fonction = null;
+
     public function __construct()
     {
         $this->dossiers = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name. ' (' .$this->matricule. ')';
     }
 
     public function getId(): ?int
@@ -313,6 +324,18 @@ class Personne
     public function setUserUpdated(?User $user_updated): self
     {
         $this->user_updated = $user_updated;
+
+        return $this;
+    }
+
+    public function getFonction(): ?Fonction
+    {
+        return $this->fonction;
+    }
+
+    public function setFonction(?Fonction $fonction): self
+    {
+        $this->fonction = $fonction;
 
         return $this;
     }

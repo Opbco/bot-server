@@ -99,6 +99,18 @@ services:
     class: App\Admin\FonctionAdmin
     tags:
       - { name: sonata.admin, model_class: App\Entity\Fonction, controller: ~, manager_type: orm, group: Structure, label: Job positions }
+  
+  admin.structure:
+    class: App\Admin\StructureAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\Structure, controller: ~, manager_type: orm, group: Structure, label: Structures }
+
+  admin.service:
+    class: App\Admin\ServiceAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\Service, controller: ~, manager_type: orm, group: Structure, label: Services }
+    calls:
+      - [addChild, ["@admin.type_dossier", "service"]]
 
   admin.piece_requise:
     class: App\Admin\PieceRequiseAdmin
@@ -115,8 +127,37 @@ services:
   admin.type_dossier_pieces:
     class: App\Admin\TypeDossierPiecesAdmin
     tags:
-      - { name: sonata.admin, model_class: App\Entity\TypeDossierPieces, controller: ~, manager_type: orm, group: Applications, label: TypeDossier - Pieces }
+      - { name: sonata.admin, model_class: App\Entity\TypeDossierPieces, controller: ~, manager_type: orm, group: Applications, label: Type of applications - Pieces }
   
+  admin.dossier:
+    class: App\Admin\DossierAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\Dossier, controller: ~, manager_type: orm, group: Applications, label: Applications }
+    calls:
+      - [addChild, ["@admin.piece_dossier", "dossier"]]
+      - [addChild, ["@admin.piece_to_complete", "dossier"]]
+      
+  admin.piece_dossier:
+    class: App\Admin\PieceDossierAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\PieceDossier, controller: ~, manager_type: orm, group: Applications, label: Applications & documents joined }
+
+  admin.piece_to_complete:
+    class: App\Admin\PieceToCompleteAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\PieceToComplete, controller: ~, manager_type: orm, group: Applications, label: Application & Missing documents }
+
+  admin.bordereau:
+    class: App\Admin\BordereauAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\Bordereau, controller: ~, manager_type: orm, group: Applications, label: Transmissions }
+  
+  admin.personne:
+    class: App\Admin\PersonneAdmin
+    tags:
+      - { name: sonata.admin, model_class: App\Entity\Personne, controller: ~, manager_type: orm, icon: '<i class="fa fa-user-secret"></i>', group: Personnels & Usagers, label: Usagers }
+
+
   admin.document:
     class: App\Admin\DocumentAdmin
     calls:
@@ -131,8 +172,3 @@ services:
           icon: '<i class="fas fa-solid fa-building"></i>',
           label: Documents (Pictures),
         }
-
-    admin.structure:
-        class: App\Admin\StructureAdmin
-        tags:
-            - { name: sonata.admin, model_class: App\Entity\Structure, controller: ~, manager_type: orm, group: admin, label: Structure }

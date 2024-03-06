@@ -81,26 +81,28 @@ final class TypeDossierAdmin extends AbstractAdmin
             ->end()
             ->with('service in charge', ['class' => 'col-md-12'])
                 ->add('service', null, ['label' => 'service'])
-            ->end()
-            ->with('list of required documents', ['class' => 'col-md-12'])
-                ->add('typeDossierPieces', CollectionType::class, [
-                    'type_options' => [
-                        'delete' => true,
-                        'delete_options' => [
-                            'type'         => CheckboxType::class,
-                            'type_options' => [
-                                'mapped'   => false,
-                                'required' => false,
+            ->end();
+            if ($this->isCurrentRoute('edit')) {
+                $form->with('list of required documents', ['class' => 'col-md-12'])
+                    ->add('typeDossierPieces', CollectionType::class, [
+                        'type_options' => [
+                            'delete' => true,
+                            'delete_options' => [
+                                'type'         => CheckboxType::class,
+                                'type_options' => [
+                                    'mapped'   => false,
+                                    'required' => false,
+                                ]
                             ]
                         ]
-                    ]
-                ], [
-                    'edit' => 'inline',
-                    'inline' => 'table',
-                    'sortable' => 'position',
-                ])
-            ->end()
-            ->end()
+                    ], [
+                        'edit' => 'inline',
+                        'inline' => 'table',
+                        'sortable' => 'position',
+                    ])
+                ->end();
+            }
+            $form->end()
         ;
     }
 
